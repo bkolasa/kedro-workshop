@@ -1,0 +1,62 @@
+raw_daily_data:
+  type: PartitionedDataSet
+  path: data/01_raw  # path to the location of partitions
+#  dataset: pandas.CSVDataSet
+  dataset:
+    type: pickle.PickleDataSet
+    backend: pickle
+  layer: raw
+
+
+merged_data:
+  type: pandas.CSVDataSet
+  filepath: data/02_intermediate/merged_data.csv
+  layer: intermediate
+
+
+processed_data:
+  type: pandas.CSVDataSet
+  filepath: data/03_primary/processed_data.csv
+  layer: primary
+
+
+train_data:
+  type: pandas.CSVDataSet
+  filepath: data/05_model_input/train.csv
+  layer: model_input
+
+
+test_data:
+  type: pandas.CSVDataSet
+  filepath: data/05_model_input/test.csv
+  layer: model_input
+
+
+test_labels:
+  type: pandas.CSVDataSet
+  filepath: data/05_model_input/test_labels.csv
+  layer: model_input
+
+
+ml_model:
+  type: kedro_mlflow.io.artifacts.MlflowArtifactDataSet
+  data_set:
+    type: pickle.PickleDataSet
+    filepath: data/06_models/ml_model.pkl
+    backend: pickle
+  layer: models
+
+
+predictions:
+  type: pandas.CSVDataSet
+  filepath: data/07_model_output/predictions.csv
+  layer: model_output
+
+auc_score:
+  type: kedro_mlflow.io.metrics.MlflowMetricDataSet
+
+evaluation_plot:
+  type: kedro_mlflow.io.artifacts.MlflowArtifactDataSet
+  data_set:
+    type: matplotlib.MatplotlibWriter
+    filepath: data/08_reporting/auc_plots.png
