@@ -167,3 +167,6 @@ media/
 
 # Ignore all notebooks
 *.ipynb
+
+# MlFlow
+mlruns/
