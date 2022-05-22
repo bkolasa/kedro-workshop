@@ -5,7 +5,6 @@ name = "pypi"
 
 [packages]
 kedro = "==0.18.1"
-kedro-mlflow = "==0.10.0"
 kedro-viz = "==4.5.0"
 kedro-docker = "0.2.2"
 matplotlib= ">=3.5.0"

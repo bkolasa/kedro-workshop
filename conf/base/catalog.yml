@@ -1,7 +1,6 @@
 raw_daily_data:
   type: PartitionedDataSet
   path: data/01_raw  # path to the location of partitions
-#  dataset: pandas.CSVDataSet
   dataset:
     type: pickle.PickleDataSet
     backend: pickle
@@ -39,11 +38,9 @@ test_labels:
 
 
 ml_model:
-  type: kedro_mlflow.io.artifacts.MlflowArtifactDataSet
-  data_set:
-    type: pickle.PickleDataSet
-    filepath: data/06_models/ml_model.pkl
-    backend: pickle
+  type: pickle.PickleDataSet
+  filepath: data/06_models/ml_model.pkl
+  backend: pickle
   layer: models
 
 
@@ -52,11 +49,6 @@ predictions:
   filepath: data/07_model_output/predictions.csv
   layer: model_output
 
-auc_score:
-  type: kedro_mlflow.io.metrics.MlflowMetricDataSet
-
 evaluation_plot:
-  type: kedro_mlflow.io.artifacts.MlflowArtifactDataSet
-  data_set:
-    type: matplotlib.MatplotlibWriter
-    filepath: data/08_reporting/auc_plots.png
+  type: matplotlib.MatplotlibWriter
+  filepath: data/08_reporting/auc_plots.png
