@@ -1,23 +1,31 @@
 
-# Kedro project including MLFlow experiment tracking
+# Kedro project including experiment tracking
 ## Prerequisites
+The main branch of this project contains the content of a finished workshop. If we want to start workshop from scratch firstly we need to switch to `start_from_scratch` git branch.
+```
+git switch start_from_scratch
+```
+
 We will be using *pipenv* virtual environment. Let's install it first
 ```
 pip install pipenv
 ```
 
-Then we want to create a new project and install required dependencies
+Then we want to install all of required dependencies.
 ```
 pipenv install
 ```
-This command will install `kedro`, `mlflow`, 'kedro-viz` and other required packages.
+This command will install `kedro`,'kedro-viz` and other required packages. 
 Finally, we can enter the virtual env shell.
 ```
 pipenv shell
 ```
 
-## Data input for workshop
-We will work on transaction credit risk data which can be downloaded from [here](https://github.com/Fraud-Detection-Handbook/simulated-data-transformed/tree/main/data)
+## Bootstrapping a new Kedro project
+During the workshop we will work on an example project provided by Kedro. We can initialize it by executinh following command.
+```
+kedro new --starter=spaceflights
+```
 
 # Working with Kedro
 
@@ -34,46 +42,57 @@ kedro run
 `Kedro run` command is highly customizable and we can choose what to run.
 For example the `--pipeline` argument runs only a selected pipeline.
 ```
-kedro run --pipeline de
+kedro run --pipeline data_processing
 ```
 `--to-outputs` runs the whole path of operations required to produce given output. 
 ```
 kedro run --to-outputs="evaluation_plot"
 ```
+`--from-inputs` runs the whole path starting from given dataset node
+```
+kedro run --from-inputs=model_input_table
+```
+
 As well, we can modify parameters configured in the *parameters.yml* file 
 ```
-kedro run --params contamination_value:0.02
+kedro run --params model_options.test_size=0.1
 ```
 
 ### Tasks
 
-1. Add a new parameter to *IsolationForest* model in data science pipeline
+1. Add a new parameter to linear regression model in data science pipeline (ex. `n_jobs` parameter of `LinearRegressor`)
 Check how kedro viz diagram has changed and that you can specify it via command line. (10 min.)
 
-## Tracking experiments with MLFlow
+## Tracking experiments
 
-As a next step let's plug in the support for experiment tracking using MLFlow.
-```
-pipenv install kedro-mlflow
-```
+Starting experiment tracking in Kedro requires modifying the project. Firstly, we need to setup the store for our experiment.
 
-In order to start the work we need to generate a proper `mlflow.yml` file that stores the configuration 
-and informs the *kedro-mlflow* plugin to send all the information into MLFlow database
-```
-kedro mlflow init
-```
+1. Paste this snippet into `settings.py`
+```python
+from kedro_viz.integrations.kedro.sqlite_store import SQLiteStore
+from pathlib import Path
 
-Let's run the MLFlow server and see how it looks like 
+SESSION_STORE_CLASS = SQLiteStore
+SESSION_STORE_ARGS = {"path": str(Path(__file__).parents[2] / "data")}
 ```
-kedro mlflow ui
+2. Create directory for tracking artifacts
 ```
+mkdir -p data/09_tracking
+```
+3. Add metric artifacts into the catalog
+```
+metrics:
+  type: tracking.MetricsDataSet
+  filepath: data/09_tracking/metrics.json
+
+companies_columns:
+  type: tracking.JSONDataSet
+  filepath: data/09_tracking/companies_columns.json
+```
+4. Modify the pipeline and nodes. See https://docs.kedro.org/en/stable/experiment_tracking/index.html#modify-your-nodes-and-pipelines-to-log-metrics for more.
 
 ### Tasks
-
-1. Add MLFlow support to project by installing *kedro-mlflow* plugin and initializing the MLFlow support. (5 min.)
-2. Register *auc* score metric by adding new *kedro_mlflow.io.metrics.MlflowMetricDataSet* to data catalog (5 min.)
-3. Add artifacts to experiments by using *type: kedro_mlflow.io.artifacts.MlflowArtifactDataSet* (5 min.)
-
+1. Register more parameters 
 # Deploying your model 
 
 Kedro in the basic version offers building python *.whl* and *.egg* packages

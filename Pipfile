@@ -6,7 +6,7 @@ name = "pypi"
 [packages]
 kedro = "==0.18.10"
 kedro-viz = "==6.3.0"
-kedro-docker = "0.2.2"
+kedro-docker = "*"
 matplotlib= ">=3.5.0"
 nbstripout = "~=0.4"
 pandas = ">=1.3"
