@@ -1,5 +1,7 @@
 import pandas as pd
 from typing import Tuple, Dict
+import matplotlib.pyplot as plt
+import seaborn as sn
 
 
 def _is_true(x: pd.Series) -> pd.Series:
@@ -67,3 +69,14 @@ def create_model_input_table(
     )
     model_input_table = model_input_table.dropna()
     return model_input_table
+
+def create_confusion_matrix(companies: pd.DataFrame):
+    actuals = [0, 1, 0, 0, 1, 1, 1, 0, 1, 0, 1]
+    predicted = [1, 1, 0, 1, 0, 1, 0, 0, 0, 1, 1]
+    data = {"y_Actual": actuals, "y_Predicted": predicted}
+    df = pd.DataFrame(data, columns=["y_Actual", "y_Predicted"])
+    confusion_matrix = pd.crosstab(
+        df["y_Actual"], df["y_Predicted"], rownames=["Actual"], colnames=["Predicted"]
+    )
+    sn.heatmap(confusion_matrix, annot=True)
+    return plt

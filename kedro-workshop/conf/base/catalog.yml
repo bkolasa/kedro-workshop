@@ -77,3 +77,8 @@ metrics:
 companies_columns:
   type: tracking.JSONDataSet
   filepath: data/09_tracking/companies_columns.json
+
+confusion_matrix:
+  type: matplotlib.MatplotlibWriter
+  filepath: data/09_tracking/confusion_matrix.png
+  versioned: true

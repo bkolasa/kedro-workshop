@@ -1,6 +1,6 @@
 from kedro.pipeline import Pipeline, node, pipeline
 
-from .nodes import create_model_input_table, preprocess_companies, preprocess_shuttles
+from .nodes import create_confusion_matrix, create_model_input_table, preprocess_companies, preprocess_shuttles
 
 
 def create_pipeline(**kwargs) -> Pipeline:
@@ -9,7 +9,7 @@ def create_pipeline(**kwargs) -> Pipeline:
             node(
                 func=preprocess_companies,
                 inputs="companies",
-                outputs=["companies_columns","preprocessed_companies"],
+                outputs=["companies_columns", "preprocessed_companies"],
                 name="preprocess_companies_node",
             ),
             node(
@@ -20,9 +20,15 @@ def create_pipeline(**kwargs) -> Pipeline:
             ),
             node(
                 func=create_model_input_table,
-                inputs=["preprocessed_shuttles", "preprocessed_companies", "reviews"],
+                inputs=["preprocessed_shuttles",
+                        "preprocessed_companies", "reviews"],
                 outputs="model_input_table",
                 name="create_model_input_table_node",
+            ),
+            node(
+                func=create_confusion_matrix,
+                inputs="companies",
+                outputs="confusion_matrix",
             ),
         ]
     )

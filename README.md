@@ -92,7 +92,10 @@ companies_columns:
 4. Modify the pipeline and nodes. See https://docs.kedro.org/en/stable/experiment_tracking/index.html#modify-your-nodes-and-pipelines-to-log-metrics for more.
 
 ### Tasks
-1. Register more parameters 
+1. Register more parameters into tracking
+2. Save all the parameters defined in catalog into model tracking.
+
+
 # Deploying your model 
 
 Kedro in the basic version offers building python *.whl* and *.egg* packages
@@ -103,14 +106,18 @@ kedro package
 However, we can leverage the container support by using *kedro-docker* plugin.
 The following command generates for us a *Dockerfile*.
 ```
-kedro docker init
+pipenv install kedro-docker && kedro docker init
 ```
 Later, we can create an image that we can distribute.
 ```
 kedro docker build
 ```
 
-### Tasks
-1. Package the Kedro project and try to load it as a Python module (5 min.)
-2. Remove MlFlow support from our project by adjusting *catalog.yml* and create a docker image 
-with the Kedro project and try to run it. (10 min.)
+It is highly likely that it will fail due to missing OS dependencies. Adding following command to `Dockerfile` should help.
+
+```
+RUN apt-get update && apt-get -y install python3-dev \
+                        gcc \
+                        libc-dev
+```
+
